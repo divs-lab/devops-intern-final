@@ -4,19 +4,19 @@
 
 A small NGINX application packaged as a non-root Docker image, checked by shell scripts and GitHub Actions, deployable to Nomad with Consul health checks, and observable through a local Grafana, Loki, and Grafana Alloy stack.
 
-> The badge targets the repository configured as `origin`; it will show a result after a GitHub Actions run completes. No push, image publication, or external change was made from this workspace.
+> PR #1 is merged to the public `main` branch. The post-merge workflow passed and published the commit-SHA and `latest` GHCR tags. Release tag `v1.0.0` points to the merge commit.
 
 ## Assessment task map
 
 | Task | Implementation | Local verification | Status / evidence |
 | --- | --- | --- | --- |
-| 1. Git repository and workflow | `.gitignore`, feature branch, incremental commits, this README | `git status --short --branch`; `git log --oneline`; `git diff --check` | Local review ready; remote URL configured. GitHub visibility/default branch and PR are pending remote access. |
-| 2. Linux shell scripts | `scripts/sysinfo.sh`, `scripts/healthcheck.sh` | `shellcheck scripts/sysinfo.sh scripts/healthcheck.sh`; run both scripts in WSL | Both tracked executable (`100755`); runtime and lint verified. Screenshot pending. |
-| 3. Dockerized NGINX | `app/Dockerfile`, `app/nginx.conf`, `app/index.html` | Docker build; `docker inspect`; `curl.exe` on `/` and `/healthz` | Built image was 29,412,220 bytes; UID 101 (`nginx`); HTTP 200 / `ok`; build id `assessment-check`. Screenshot pending. |
-| 4. GitHub Actions CI/CD | `.github/workflows/ci.yml` | Local review plus the workflow's equivalent local lint/build/runtime checks | Workflow reviewed; no real GitHub Actions run or GHCR publication observed. |
-| 5. Nomad and Consul | `nomad/nginx.nomad.hcl` | `nomad job validate`; job/allocation status; Consul check and dynamic-port HTTP request | Validated; one healthy allocation and passing HTTP check. Screenshot pending. |
-| 6. Logging and monitoring | `monitoring/` | Compose config validation; service health; Loki readiness and LogQL query | Grafana, Loki, Alloy healthy; real NGINX logs queried. Screenshot pending. |
-| 7. Documentation and evidence | `README.md`, `docs/evidence-checklist.md`, `docs/evidence/` | `git diff --check`; evidence inventory | Text transcripts saved and homepage screenshot captured; remaining screenshots and GitHub run evidence are pending. |
+| 1. Git repository and workflow | `.gitignore`, feature branch, incremental commits, this README | `git status --short --branch`; `git log --oneline`; `git diff --check` | Public repository; PR #1 merged to `main` at `d069a63`. |
+| 2. Linux shell scripts | `scripts/sysinfo.sh`, `scripts/healthcheck.sh` | ShellCheck, Hadolint, and runtime checks | Both tracked executable (`100755`); runtime and lint verified. Terminal screenshot pending. |
+| 3. Dockerized NGINX | `app/Dockerfile`, `app/nginx.conf`, `app/index.html` | Docker build; `docker inspect`; `curl.exe` on `/` and `/healthz` | 29,412,220 bytes; UID 101 (`nginx`); HTTP 200 / `ok`; build id `assessment-check`. Screenshots saved. |
+| 4. GitHub Actions CI/CD | `.github/workflows/ci.yml` | [Main workflow run #2](https://github.com/divs-lab/devops-intern-final/actions/runs/39277947649) | Lint, build/test, and GHCR publish passed; SHA and `latest` tags verified. |
+| 5. Nomad and Consul | `nomad/nginx.nomad.hcl` | `nomad job validate`; job/allocation status; Consul check and dynamic-port HTTP request | Validated; one healthy allocation and passing HTTP check. Screenshots saved. |
+| 6. Logging and monitoring | `monitoring/` | Compose config validation; service health; Loki readiness and LogQL query | Grafana, Loki, Alloy healthy; real NGINX logs queried. Grafana screenshot pending. |
+| 7. Documentation and evidence | `README.md`, `docs/evidence-checklist.md`, `docs/evidence/` | `git diff --check`; evidence inventory | Text evidence saved; six genuine screenshots saved. ShellCheck/Hadolint and Grafana/Loki screenshots pending. |
 
 ## Architecture
 
@@ -45,7 +45,7 @@ The application can run directly in Docker or as a Nomad Docker task. Nomad regi
 | `.github/workflows/ci.yml` | Lint, image build, runtime checks, and guarded GHCR publish |
 | `nomad/nginx.nomad.hcl` | Nomad service job and Consul HTTP check |
 | `monitoring/` | Loki, Grafana Alloy, Grafana, provisioning, and local Compose config |
-| `docs/screenshots/` | Genuine assessment screenshots; homepage captured, other items pending |
+| `docs/screenshots/` | Genuine assessment screenshots for homepage, health, Docker, Nomad, Consul, and GitHub Actions |
 
 ## Technology and prerequisites
 
@@ -164,9 +164,9 @@ docker compose --env-file monitoring/.env -f monitoring/docker-compose.yml down 
 
 ## GitHub Actions and GHCR
 
-The workflow runs lint/build/runtime checks for pull requests targeting `main` and pushes to `main`. It builds with the commit SHA as `BUILD_SHA`, checks the health endpoint and home-page identifier, and rejects images at or above 60 MB. ShellCheck and Hadolint run in versioned tool images. The publish job is gated to pushes on `main`, requests `packages: write` only for that job, authenticates with `GITHUB_TOKEN`, and tags the commit SHA and `latest` on the default branch. Pull requests and feature-branch pushes do not publish. No GitHub Actions run has been verified from this local session.
+The workflow runs lint/build/runtime checks for pull requests targeting `main` and pushes to `main`. It builds with the commit SHA as `BUILD_SHA`, checks the health endpoint and home-page identifier, and rejects images at or above 60 MB. ShellCheck and Hadolint run in versioned tool images. The publish job is gated to pushes on `main`, requests `packages: write` only for that job, authenticates with `GITHUB_TOKEN`, and tags the commit SHA and `latest` on the default branch. Pull requests and feature-branch pushes do not publish. The merged main run completed successfully; see [run #2](https://github.com/divs-lab/devops-intern-final/actions/runs/39277947649).
 
-The badge URL uses the configured `origin` repository. Its reachability, visibility, and default branch could not be confirmed in this environment because GitHub CLI is unavailable and the web request was not retrievable. Confirm those details in GitHub before opening the pull request.
+The badge URL targets the verified public repository `divs-lab/devops-intern-final`, whose default branch is `main`.
 
 ## Security choices and limitations
 
@@ -176,13 +176,13 @@ The badge URL uses the configured `origin` repository. Its reachability, visibil
 - No Compose service is privileged. Alloy requires Docker daemon socket access to discover and read Docker logs; that socket is a high-trust interface.
 - Loki is configured for a single local instance, filesystem storage, no authentication, and seven-day retention. It is for local assessment use, not a multi-user or production deployment.
 - Docker image tags are versioned but not digest-pinned. No image scan was run.
-- The assessment requires GHCR publication and a public repository, but these are external actions and have not been performed.
+- The repository is public, and the GHCR image is publicly pullable. The main workflow published both assessment tags.
 
 ### Known limitations
 
 - The local Nomad allocation runs `devops-intern-final:local` with NGINX `1.27.4`; this branch builds `1.31.7`. A separately reviewed rebuild and deployment is needed to update it.
-- The repository's remote visibility, current default branch, and latest remote commit could not be queried from this network-restricted session. The configured remote and local `origin/HEAD` are documented below.
-- Screenshots, a real GitHub Actions run, GHCR image publication, PR review/merge, and the `v1.0.0` tag are pending.
+- The running Nomad allocation still uses NGINX `1.27.4`; updating it requires a reviewed rebuild and deployment.
+- Two manual screenshots remain: ShellCheck/Hadolint terminal output and Grafana Explore with real NGINX logs.
 
 ## Troubleshooting cases from this work
 
@@ -193,7 +193,7 @@ The badge URL uses the configured `origin` repository. Its reachability, visibil
 
 ## Assessment evidence
 
-See [the evidence checklist](docs/evidence-checklist.md). A genuine homepage screenshot is saved in `docs/screenshots/`; the other screenshot items remain pending. Credential-free terminal and service transcripts are in `docs/evidence/`.
+See [the evidence checklist](docs/evidence-checklist.md). Six genuine screenshots are saved in `docs/screenshots/`; ShellCheck/Hadolint and Grafana/Loki screenshots remain pending. Credential-free terminal and service transcripts are in `docs/evidence/`.
 
 ## Validation recorded for this workspace
 
@@ -203,7 +203,7 @@ See [the evidence checklist](docs/evidence-checklist.md). A genuine homepage scr
 - A real LogQL query returned the live allocation entry `172.17.0.1 - - [19/Oct/2026:14:38:22 +0000] "GET / HTTP/1.1" 200 477 "-" "curl/8.21.0"`. That allocation is still on the older image and uses its existing combined log format; the newly built image emitted the configured JSON access log in its local smoke test.
 - ShellCheck `0.11.0` and Hadolint `2.12.0` passed using the same versioned tool containers referenced by CI. `sysinfo.sh` and `healthcheck.sh` ran successfully in Ubuntu 26.04 WSL.
 - `nomad job validate` passed. Nomad reported the job running with a successful deployment and one healthy allocation; `nomad alloc status` showed dynamic mapping `127.0.0.1:23321 -> 8080`, zero task restarts, CPU 100 MHz and memory 64 MiB. The Consul `nginx-health` check was `passing`, outputting HTTP 200 and `ok`.
-- Docker CLI `29.8.2` and Compose `v5.5.1` are installed. No GitHub Actions run was performed; repository publication, PR, GHCR publish, and release tag remain pending.
+- Docker CLI `29.8.2` and Compose `v5.5.1` are installed. PR #1 merged as `d069a6375dc8396bc85f6becf8923e023d481bf9`. Main workflow run #2 (`39277947649`) passed lint, build/test, and GHCR publication. The SHA-specific and `latest` GHCR image tags resolve to the same manifest digest. Annotated tag `v1.0.0` points to the merge commit.
 - Fresh image smoke test on 2026-10-19: `nginx -t` reported syntax OK and configuration test successful; container user was `nginx` (runtime UID/GID 101); Docker health reached `healthy`; image size was `29,412,220` bytes; `/healthz` returned `HTTP/1.1 200 OK` with body `ok`; homepage included build identifier `assessment-check`; access logs emitted JSON to stdout.
 - Git shows `.github/workflows/ci.yml` and `app/index.html` as modified, but their normalized worktree hashes match `HEAD`, and `git diff` has no content changes for them. Global `core.autocrlf=true` causes LF/CRLF warnings; no file-mode changes were found. `app/Dockerfile` and `app/nginx.conf` have intentional content changes. No files were reset or discarded.
 
@@ -213,34 +213,9 @@ Stop the application with `docker stop devops-intern-final-nginx` and the monito
 
 ## Git workflow and release checklist
 
-The current branch is `feature/repository-bootstrap`, based on the existing `main`. Review and stage only the intended changes. Proposed conventional commits:
+The submission is on public GitHub repository `divs-lab/devops-intern-final`, whose default branch is `main`. [PR #1](https://github.com/divs-lab/devops-intern-final/pull/1) merged at `d069a6375dc8396bc85f6becf8923e023d481bf9`. The post-merge [CI run #2](https://github.com/divs-lab/devops-intern-final/actions/runs/39277947649) passed lint, build/test, and GHCR publication.
 
-- `fix: repair gitignore and refresh nginx image logging` - `.gitignore`, `app/Dockerfile`, `app/nginx.conf`.
-- `feat: add local grafana loki alloy monitoring` - `monitoring/` configuration and datasource provisioning.
-- `feat: add Nomad deployment job with Consul health checks` - `nomad/nginx.nomad.hcl` (currently untracked).
-- `docs: document assessment setup validation and evidence` - `README.md`, `docs/evidence-checklist.md`, `docs/pr-description.md`.
-
-The CI workflow and `app/index.html` are flagged by Git status but have no normalized content diff; inspect before staging. No changes have been committed.
-
-The configured Git remote is `origin` at `https://github.com/divs-lab/devops-intern-final.git`; `origin/HEAD` points to `origin/main`. GitHub CLI is not installed and GitHub page retrieval was unavailable, so remote visibility, current remote default branch, branch freshness, and PR state still need confirmation in GitHub. See [the prepared PR description and reviewer checklist](docs/pr-description.md).
-
-After owner review and approval:
-
-1. Push `feature/repository-bootstrap` and open a pull request targeting `main`.
-2. Review the diff and wait for the pull request CI checks to pass; capture the successful run.
-3. Merge the pull request. On the resulting push to the default branch, confirm CI builds and publishes the full commit-SHA and `latest` GHCR tags. Adjust GHCR package visibility if the assessment requires public pulls.
-4. From Ubuntu / WSL, update local `main` to the reviewed merge commit and create the release tag there:
-
-   ```bash
-   git switch main
-   git pull --ff-only origin main
-   git tag -a v1.0.0 -m "Release v1.0.0"
-   git push origin v1.0.0
-   ```
-
-5. Confirm `v1.0.0` points to the intended merged commit and record the published image and release links.
-
-No branch push, pull request, merge, package publication, repository visibility change, or release tag was made in this session.
+The public GHCR tags `ghcr.io/divs-lab/devops-intern-final:sha-d069a6375dc8396bc85f6becf8923e023d481bf9` and `ghcr.io/divs-lab/devops-intern-final:latest` were inspected successfully and resolve to manifest digest `sha256:d1de1c8941a81ab882082ffc1916fa74182fbfa96f1453c3bf93d25534260d63`. Annotated release tag `v1.0.0` points to the merge commit. See [the evidence checklist](docs/evidence-checklist.md) for the two remaining local UI screenshots.
 
 ## Final assessment checklist
 
@@ -250,6 +225,7 @@ No branch push, pull request, merge, package publication, repository visibility 
 - [x] ShellCheck and Hadolint pass using the versioned CI tool containers.
 - [x] NGINX image builds, runs non-root, stays below 60 MB, and serves the page and health endpoint.
 - [x] Nomad allocation and Consul health check rechecked in WSL.
-- [x] Grafana, Loki, Alloy, and a real NGINX LogQL query verified; homepage screenshot captured and remaining screenshots pending.
-- [ ] GitHub Actions succeeds on a reviewed pull request.
-- [ ] Owner-approved repository publication, merge, GHCR publish, and `v1.0.0` release tag.
+- [x] Grafana, Loki, Alloy, and a real NGINX LogQL query verified; homepage and infrastructure screenshots saved.
+- [x] PR #1 merged and post-merge GitHub Actions lint, build/test, and GHCR publish jobs passed.
+- [x] Public GHCR SHA and `latest` tags verified; annotated `v1.0.0` tag points to the merge commit.
+- [ ] Capture ShellCheck/Hadolint terminal and Grafana/Loki Explore screenshots.

@@ -1,4 +1,4 @@
-# Assessment Evidence Checklist
+﻿# Assessment Evidence Checklist
 
 Capture genuine screenshots from the running services. Store them in `docs/screenshots/` and include the date and context in each filename. An evidence item remains pending until its screenshot exists and shows the relevant result.
 
@@ -11,7 +11,7 @@ Capture genuine screenshots from the running services. Store them in `docs/scree
 | Nomad | Job deployment and healthy allocation | Nomad agent and running `devops-intern-final` job | Text evidence saved in [`nomad-consul.txt`](evidence/nomad-consul.txt). **Screenshot saved:** [`nomad-healthy-allocation-2026-10-19.png`](screenshots/nomad-healthy-allocation-2026-10-19.png). |
 | Consul | `nginx-health` passing and dynamic host URL | Consul agent and the Nomad allocation | Text evidence saved in [`nomad-consul.txt`](evidence/nomad-consul.txt). **Screenshot saved:** [`consul-nginx-health-passing-2026-10-19.png`](screenshots/consul-nginx-health-passing-2026-10-19.png). |
 | Grafana / Loki | Grafana Explore with Loki selected and real NGINX lines | Compose Grafana, Loki, Alloy, and an NGINX container; currently healthy | Text evidence saved in [`monitoring.txt`](evidence/monitoring.txt), including real JSON `GET /` logs. GUI screenshot pending: `grafana-loki-nginx-logs-2026-10-19.png`. |
-| GitHub Actions | Successful reviewed `main` PR run showing lint and build/test jobs | GitHub repository and a completed successful Actions run | **Pending external state:** no successful run was observed. After one exists, save as `github-actions-main-pr-2026-10-19.png`. |
+| GitHub Actions | Successful reviewed `main` PR run showing lint and build/test jobs | GitHub repository and a completed successful Actions run | Text result saved in [`github-actions.txt`](evidence/github-actions.txt). **Screenshot saved:** [`github-actions-main-pr-2026-10-19.png`](screenshots/github-actions-main-pr-2026-10-19.png). Main run #2 passed lint, build/test, and GHCR publish for commit `d069a63`. |
 
 ## What to open and capture
 
@@ -22,6 +22,6 @@ Capture genuine screenshots from the running services. Store them in `docs/scree
 - **Nomad:** open `http://127.0.0.1:4646/ui/jobs/devops-intern-final@default`; show the successful deployment and the healthy allocation.
 - **Consul:** open `http://127.0.0.1:8500/ui/dc1/services`, select `devops-intern-final`, and show its passing `nginx-health` check and dynamic `23321` URL.
 - **Grafana / Loki:** open `http://127.0.0.1:3000`, sign in locally (do not include the login screen or credentials), choose **Explore**, select **Loki**, enter `{job="nginx",container=~".*nginx.*"}`, select a recent time range, run the query, and capture the returned entries and labels.
-- **GitHub Actions:** a successful PR run is not available yet. After the approved PR runs, open its completed workflow run and show successful lint and build/test jobs.
+- **GitHub Actions:** the merged main run succeeded. The saved screenshot shows the successful lint, build/test, and GHCR publish jobs.
 
-Do not use mockups, fabricated terminal output, or screenshots from a different deployment. Check every screenshot for credentials, tokens, or unrelated personal details before committing it. Screenshots saved: homepage, health endpoint, Docker, Nomad, and Consul. Remaining screenshots: ShellCheck / Hadolint, Grafana / Loki, and GitHub Actions.
+Do not use mockups, fabricated terminal output, or screenshots from a different deployment. Check every screenshot for credentials, tokens, or unrelated personal details before committing it. Screenshots saved: homepage, health endpoint, Docker, Nomad, Consul, and GitHub Actions. Remaining screenshots: ShellCheck / Hadolint and Grafana / Loki.

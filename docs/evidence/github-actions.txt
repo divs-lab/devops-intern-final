@@ -1,0 +1,17 @@
+﻿DevOps assessment GitHub Actions evidence — captured 2026-10-19
+GitHub API result: divs-lab/devops-intern-final, workflow run 39277947649
+Workflow: CI
+Event: push
+Branch: main
+Commit: d069a6375dc8396bc85f6becf8923e023d481bf9
+Run status: completed
+Run conclusion: success
+Run URL: https://github.com/divs-lab/devops-intern-final/actions/runs/39277947649
+Jobs:
+- Lint shell scripts and Dockerfile: completed / success
+- Build and test NGINX: completed / success
+- Publish image to GHCR: completed / success
+GHCR verification: docker buildx imagetools inspect
+Image tags: ghcr.io/divs-lab/devops-intern-final:sha-d069a6375dc8396bc85f6becf8923e023d481bf9 and ghcr.io/divs-lab/devops-intern-final:latest
+Both tags resolved to manifest-list digest sha256:d1de1c8941a81ab882082ffc1916fa74182fbfa96f1453c3bf93d25534260d63.
+Release tag: v1.0.0 (annotated) -> d069a6375dc8396bc85f6becf8923e023d481bf9
