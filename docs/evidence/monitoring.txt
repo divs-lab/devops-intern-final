@@ -1,0 +1,19 @@
+﻿DevOps assessment monitoring evidence — captured 2026-10-19
+Fresh request through assessment image: HTTP 200
+Loki readiness: HTTP 200; body=ready
+Grafana health: database=ok; version=13.2.2
+Docker service state:
+devops-intern-final-monitoring-alloy-1 Up 23 minutes (healthy)
+devops-intern-final-monitoring-grafana-1 Up About an hour (healthy)
+devops-intern-final-monitoring-loki-1 Up About an hour (healthy)
+LogQL query: {job="nginx",container=~".*nginx.*"}
+Loki result status: success; returned stream count: 4; returned entry count: 9
+container=evidence-nginx timestamp_ns=1792422180733470784 line=2026/10/19 15:03:00 [info] 28#28: *16 client 172.17.0.1 closed keepalive connection
+container=evidence-nginx timestamp_ns=1792422033033912298 line=2026/10/19 15:00:33 [info] 28#28: *10 client 172.17.0.1 closed keepalive connection
+container=evidence-nginx timestamp_ns=1792421919851577309 line=2026/10/19 14:58:39 [info] 28#28: *5 client 172.17.0.1 closed keepalive connection
+container=evidence-nginx timestamp_ns=1792421919851533612 line=2026/10/19 14:58:39 [info] 28#28: *4 client closed connection while waiting for request, client: 172.17.0.1, server: 0.0.0.0:8080
+container=evidence-nginx timestamp_ns=1792421919530973866 line=2026/10/19 14:58:39 [info] 28#28: *3 client 172.17.0.1 closed keepalive connection
+container=evidence-nginx timestamp_ns=1792422180730398503 line={"time":"2026-10-19T15:03:00+00:00","remote_addr":"172.17.0.1","method":"GET","uri":"/","status":200,"body_bytes_sent":485,"request_time":0.000}
+container=evidence-nginx timestamp_ns=1792421919527529456 line={"time":"2026-10-19T14:58:39+00:00","remote_addr":"172.17.0.1","method":"GET","uri":"/","status":200,"body_bytes_sent":485,"request_time":0.000}
+container=evidence-nginx timestamp_ns=1792421919617503126 line={"time":"2026-10-19T14:58:39+00:00","remote_addr":"172.17.0.1","method":"GET","uri":"/favicon.ico","status":404,"body_bytes_sent":555,"request_time":0.000}
+container=nginx-5f775401-76a0-2336-60ce-9e001ad39dfd timestamp_ns=1792422167587473793 line=2026/10/19 15:02:47 [info] 29#29: *828 client 172.17.0.1 closed keepalive connection

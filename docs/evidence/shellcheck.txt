@@ -1,0 +1,7 @@
+﻿DevOps assessment lint evidence — captured 2026-10-19
+ShellCheck command: docker run --rm -v <repo>:/mnt -w /mnt koalaman/shellcheck:v0.11.0 scripts/sysinfo.sh scripts/healthcheck.sh
+(no diagnostics)
+ShellCheck exit code: 0
+Hadolint command: Get-Content app/Dockerfile -Raw | docker run --rm -i hadolint/hadolint:v2.12.0
+(no diagnostics)
+Hadolint exit code: 0
