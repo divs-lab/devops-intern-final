@@ -55,7 +55,7 @@ The application can run directly in Docker or as a Nomad Docker task. Nomad regi
 - Local ports `8080`, `3000`, `3100`, and `12345` available when using the corresponding services.
 - A local Grafana password stored in the ignored `monitoring/.env` file.
 
-The monitoring images are version-tagged: Loki `3.7.8`, Grafana Alloy `1.20.1`, and Grafana `13.2.2` (versions checked against upstream releases on 2026-10-19: [Loki 3.7 release notes](https://grafana.com/docs/loki/latest/release-notes/v3-7/), [Alloy releases](https://github.com/grafana/alloy/releases), and [Grafana releases](https://github.com/grafana/grafana/releases)). Promtail is not used because Grafana ended its support on 2026-03-02 ([migration notice](https://grafana.com/docs/alloy/latest/set-up/migrate/from-promtail/)). The app uses the [NGINX unprivileged image](https://hub.docker.com/r/nginxinc/nginx-unprivileged/tags) with the maintained `1.31-alpine-slim` tag. Review and update these tags deliberately when upgrading; for higher supply-chain assurance, pin image digests as well.
+The monitoring images are version-tagged: Loki `3.7.8`, Grafana Alloy `1.20.1`, and Grafana `13.2.2` (versions checked against upstream releases on 2026-10-19: [Loki 3.7 release notes](https://grafana.com/docs/loki/latest/release-notes/v3-7/), [Alloy releases](https://github.com/grafana/alloy/releases), and [Grafana releases](https://github.com/grafana/grafana/releases)). Promtail is not used because Grafana ended its support on 2026-03-02 ([migration notice](https://grafana.com/docs/alloy/latest/set-up/migrate/from-promtail/)). The app uses the [NGINX unprivileged image](https://hub.docker.com/r/nginxinc/nginx-unprivileged/tags) pinned to `1.31.7-alpine-slim@sha256:a8cb0f33d51fa107c96fd2bd3a71aaf564ec131e9d2bdf8700944f0ed8b170d7`. The image digest fixes the multi-platform base manifest; update the version and digest together when upgrading.
 
 ## Run the application
 
@@ -164,7 +164,7 @@ docker compose --env-file monitoring/.env -f monitoring/docker-compose.yml down 
 
 ## GitHub Actions and GHCR
 
-The workflow runs lint/build/runtime checks for pull requests targeting `main` and pushes to `main`. It builds with the commit SHA as `BUILD_SHA`, checks the health endpoint and home-page identifier, and rejects images at or above 60 MB. ShellCheck and Hadolint run in versioned tool images. The publish job is gated to pushes on `main`, requests `packages: write` only for that job, authenticates with `GITHUB_TOKEN`, and tags the commit SHA and `latest` on the default branch. Pull requests and feature-branch pushes do not publish. The merged main run completed successfully; see [run #2](https://github.com/divs-lab/devops-intern-final/actions/runs/39277947649).
+The workflow separates lint, image build, image test, and publish into four jobs. The build job uploads its image as a short-lived artifact; the test job downloads and runs that exact image, checking `/healthz`, the commit build identifier, and the 60 MB limit. Publishing depends on lint, build, and test and runs only for pushes to `main`. It requests `packages: write` only for that job and publishes the full commit SHA and `latest` tags using `GITHUB_TOKEN`. Pull requests and feature-branch pushes do not publish.
 
 The badge URL targets the verified public repository `divs-lab/devops-intern-final`, whose default branch is `main`.
 

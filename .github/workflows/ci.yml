@@ -35,8 +35,8 @@ jobs:
             hadolint/hadolint:v2.12.0 \
             < app/Dockerfile
 
-  build-and-test:
-    name: Build and test NGINX
+  build-image:
+    name: Build NGINX image
     needs: lint
     runs-on: ubuntu-latest
 
@@ -51,6 +51,48 @@ jobs:
             -f app/Dockerfile \
             -t "devops-intern-final:${GITHUB_SHA}" \
             .
+
+      - name: Check image size and save artifact
+        run: |
+          image_size="$(docker image inspect \
+            --format='{{.Size}}' \
+            "devops-intern-final:${GITHUB_SHA}")"
+
+          if [ "$image_size" -ge 62914560 ]; then
+            echo "ERROR: Image must be smaller than 60 MB."
+            exit 1
+          fi
+
+          docker save \
+            -o /tmp/devops-intern-final.tar \
+            "devops-intern-final:${GITHUB_SHA}"
+
+          echo "Image size: ${image_size} bytes"
+
+      - name: Upload built image for testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: devops-intern-final-image-${{ github.sha }}
+          path: /tmp/devops-intern-final.tar
+          retention-days: 1
+
+  test-image:
+    name: Test NGINX image
+    needs: build-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download built image
+        uses: actions/download-artifact@v4
+        with:
+          name: devops-intern-final-image-${{ github.sha }}
+          path: /tmp/devops-intern-final
+
+      - name: Load built image
+        run: docker load -i /tmp/devops-intern-final/devops-intern-final.tar
 
       - name: Start container
         run: |
@@ -86,23 +128,14 @@ jobs:
 
           grep -Fq "${GITHUB_SHA}" <<< "$page"
 
-          image_size="$(docker image inspect \
-            --format='{{.Size}}' \
-            "devops-intern-final:${GITHUB_SHA}")"
-
-          if [ "$image_size" -ge 62914560 ]; then
-            echo "ERROR: Image must be smaller than 60 MB."
-            exit 1
-          fi
-
           echo "Application tests passed."
-          echo "Image size: ${image_size} bytes"
 
   publish:
     name: Publish image to GHCR
     needs:
       - lint
-      - build-and-test
+      - build-image
+      - test-image
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
