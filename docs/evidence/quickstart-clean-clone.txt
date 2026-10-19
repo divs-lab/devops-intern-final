@@ -1,0 +1,7 @@
+﻿Clean-clone Quick Start evidence — captured 2026-10-19
+Source: fresh shallow clone of public repository divs-lab/devops-intern-final, main commit 5b334e6a0bfbc2f8f49da20aa57703415248594e
+Build: Docker image built from app/Dockerfile using the committed digest-pinned nginxinc/nginx-unprivileged:1.31.7-alpine-slim base.
+Run: container started with a unique build identifier for the check.
+Observed: /healthz returned ok; homepage contained the build identifier; Docker reported container health as healthy.
+Image size: 29,422,247 bytes (below the 60 MB CI threshold).
+Result: PASS.
