@@ -1,0 +1,63 @@
+﻿DevOps assessment Nomad / Consul evidence — captured 2026-10-19
+Command: nomad job validate + nomad job status
+Job validation successful
+ID            = devops-intern-final
+Name          = devops-intern-final
+Submit Date   = 2026-10-19T13:05:58Z
+Type          = service
+Priority      = 50
+Datacenters   = dc1
+Namespace     = default
+Node Pool     = default
+Status        = running
+Periodic      = false
+Parameterized = false
+
+Summary
+Task Group  Queued  Starting  Running  Failed  Complete  Lost  Unknown
+nginx       0       0         1        0       0         0     0
+
+Latest Deployment
+ID          = f8302019
+Status      = successful
+Description = Deployment completed successfully
+
+Deployed
+Task Group  Auto Revert  Desired  Placed  Healthy  Unhealthy  Progress Deadline
+nginx       true         1        1       1        0          2026-10-19T13:22:50Z
+
+Allocations
+ID        Node ID   Task Group  Version  Desired  Status   Created    Modified
+5f775401  c3ddc3f8  nginx       0        run      running  1h45m ago  1h44m ago
+Selected allocation mapping and health lines:
+Deployment Health   = healthy
+Allocation Addresses:
+Label  Dynamic  Address
+*http  yes      127.0.0.1:23321 -> 8080
+Task "nginx" is "running"
+CPU        Memory          Disk     Addresses
+Total Restarts = 0
+Command: curl.exe -i http://127.0.0.1:23321/healthz
+HTTP/1.1 200 OK
+Server: nginx/1.27.4
+Date: Mon, 19 Oct 2026 15:02:47 GMT
+Content-Type: text/plain
+Content-Length: 3
+Connection: keep-alive
+
+ok
+Selected Consul health API fields:
+
+
+Name        : nginx-health
+Status      : passing
+Output      : HTTP GET http://127.0.0.1:23321/healthz: 200 OK Output: ok
+              
+ServiceName : devops-intern-final
+Type        : http
+Interval    : 10s
+Timeout     : 2s
+
+
+
+

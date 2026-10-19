@@ -1,4 +1,3 @@
-@'
 # IDE and editor files
 .idea/
 .vscode/
@@ -22,7 +21,16 @@ __pycache__/
 .venv/
 venv/
 
+# Local state and generated output
+.cache/
+.terraform/
+*.tfstate
+*.tfstate.*
+.coverage
+coverage/
+build/
+dist/
+
 # OS files
 .DS_Store
 Thumbs.db
-'@ | Set-Content -Encoding utf8 .gitignore

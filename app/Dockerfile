@@ -1,4 +1,4 @@
-FROM ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine-slim
+FROM nginxinc/nginx-unprivileged:1.31-alpine-slim
 
 USER root
 
